@@ -1,6 +1,12 @@
 //url_base = 'http://localhost/RomaChemical/wp/';
 url_base = 'http://romachemical.laeliteweb.com/'
 ajax_url = url_base+'wp-admin/admin-ajax.php';
+
+document.addEventListener("deviceready", onDeviceReady, false);
+function onDeviceReady() {
+	setInterval(function(){checkConnection();},30000);
+}
+
 jQuery(document).ready(function(e) {
 	
 	if( jQuery('body').hasClass('home') ){
@@ -857,4 +863,22 @@ function check_role(role){
 			}
 		}
 	});
+}
+
+function checkConnection() {
+    var networkState = navigator.connection.type;
+
+    var states = {};
+    states[Connection.UNKNOWN]  = 'Unknown connection';
+    states[Connection.ETHERNET] = 'Ethernet connection';
+    states[Connection.WIFI]     = 'WiFi connection';
+    states[Connection.CELL_2G]  = 'Cell 2G connection';
+    states[Connection.CELL_3G]  = 'Cell 3G connection';
+    states[Connection.CELL_4G]  = 'Cell 4G connection';
+    states[Connection.NONE]     = 'No network connection';
+	
+	if( states[networkState] === states[Connection.UNKNOWN] || states[networkState] === states[Connection.NONE] ){
+		navigator.notification.alert('No hay Conexión a internet o es muy lenta', function(){}, 'Error','Aceptar');
+		navigator.notification.vibrate(1000);
+	}
 }
