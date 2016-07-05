@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<widget xmlns = "http://www.w3.org/ns/widgets" xmlns:gap = "http://phonegap.com/ns/1.0" id = "com.phonegap.romachemicaluser" version = "1.0.0">
+
+    <name>Admin RomaChemical Visitas</name>
+
+    <description>
+        Esta aplicación está destinada para que los administradores de la empresa Roma Chemical tengan control sobre las visitas a sus clientes y de sus empleados.
+    </description>
+
+    <author href="http://laeliteweb.com" email="info@laeliteweb.com">
+        Luis Anaya - La Élite Web
+    </author>
+
+    <preference name="orientation" value="default" />
+    <preference name="target-device" value="universal" />
+    <preference name="fullscreen" value="true" />
+    <preference name="webviewbounce" value="true" />
+    <preference name="prerendered-icon" value="true" />
+    <preference name="stay-in-webview" value="false" />
+    <preference name="ios-statusbarstyle" value="black-opaque" />
+    <preference name="detect-data-types" value="true" />
+    <preference name="exit-on-suspend" value="false" />
+    <preference name="show-splash-screen-spinner" value="true" />
+    <preference name="auto-hide-splash-screen" value="true" />
+    <preference name="disable-cursor" value="false" />
+    <preference name="android-installLocation" value="auto" />
+	<preference name="splashscreen" value="res/screen/android" />
+	<preference name="useBrowserHistory" value="true" />
+	
+    <!-- Plugins -->
+
+    <!-- Core plugins -->
+    <gap:plugin name="org.apache.cordova.battery-status" value="org.apache.cordova.battery-status" />
+    <gap:plugin name="org.apache.cordova.console" value="org.apache.cordova.console" />
+    <gap:plugin name="org.apache.cordova.device" value="org.apache.cordova.device" />
+    <gap:plugin name="org.apache.cordova.device-motion" value="org.apache.cordova.device-motion" />
+    <gap:plugin name="org.apache.cordova.device-orientation" value="org.apache.cordova.device-orientation" />
+    <gap:plugin name="org.apache.cordova.dialogs" value="org.apache.cordova.dialogs" />
+    <gap:plugin name="org.apache.cordova.inappbrowser" value="org.apache.cordova.inappbrowser" />
+    <gap:plugin name="org.apache.cordova.network-information" value="org.apache.cordova.network-information" />
+    <gap:plugin name="org.apache.cordova.splashscreen" value="org.apache.cordova.splashscreen" />
+    <gap:plugin name="org.apache.cordova.vibration" value="org.apache.cordova.vibration" />
+
+    <!-- Define app icon for each platform. -->
+    <icon src="icon.png" />
+    <icon src="res/icon/android/icon-36-ldpi.png" gap:platform="android" gap:qualifier="ldpi" />
+    <icon src="res/icon/android/icon-48-mdpi.png" gap:platform="android" gap:qualifier="mdpi" />
+    <icon src="res/icon/android/icon-72-hdpi.png" gap:platform="android" gap:qualifier="hdpi" />
+    <icon src="res/icon/android/icon-96-xhdpi.png" gap:platform="android" gap:qualifier="xhdpi" />
+    
+    <!-- Define app splash screen for each platform. -->
+    <gap:splash src="res/screen/android/screen-ldpi-portrait.png" gap:platform="android" gap:qualifier="port-ldpi" />
+    <gap:splash src="res/screen/android/screen-mdpi-portrait.png" gap:platform="android" gap:qualifier="port-mdpi" />
+    <gap:splash src="res/screen/android/screen-hdpi-portrait.png" gap:platform="android" gap:qualifier="port-hdpi" />
+    <gap:splash src="res/screen/android/screen-xhdpi-portrait.png" gap:platform="android" gap:qualifier="port-xhdpi" />
+    
+    <string>100</string>
+    
+	<access uri="*" subdomains="true" />
+	<access origin="http://romachemical.laeliteweb.com" />
+    <plugin name="cordova-plugin-whitelist" version="1" />
+    <allow-intent href="http://*/*" />
+    <allow-intent href="https://*/*" />
+    <allow-intent href="tel:*" />
+    <allow-intent href="sms:*" />
+    <allow-intent href="mailto:*" />
+    <allow-intent href="geo:*" />
+    <platform name="android">
+        <allow-intent href="market:*" />
+    </platform>
+</widget>
