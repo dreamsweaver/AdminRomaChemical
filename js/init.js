@@ -3,6 +3,19 @@ url_base = 'http://romachemical.laeliteweb.com/'
 ajax_url = url_base+'wp-admin/admin-ajax.php';
 jQuery(document).ready(function(e) {
 	
+	jQuery('body').delegate('.logout','clic tap',function(){
+		loading_ajax();
+		localStorage.removeItem('wordpress_loggedin');
+		localStorage.removeItem('app_user_id');
+		if (!localStorage.getItem('wordpress_loggedin') && !localStorage.getItem('app_user_id')) {
+			window.location.href = 'index.html';
+		} else {
+			localStorage.setItem('wordpress_loggedin', '');
+			localStorage.setItem('app_user_id', 0);
+			window.location.href = 'index.html';
+		}
+	});
+	
 	if( jQuery('body').hasClass('home') ){
 		verify_loggedin_cookie();
 		nonce = get_nonce();
@@ -25,9 +38,10 @@ jQuery(document).ready(function(e) {
 				success: function (data) {
 					loading_ajax({estado:false});
 					if( data.status == "ok" ){
-						jQuery.cookie('wordpress_loggedin_admin', data.cookie, { expires: 14, path: '/' });
-						jQuery.cookie('app_user_id', data.user.id, { expires: 14, path: '/' });
-						check_role('administrator');
+						//jQuery.cookie('wordpress_loggedin', data.cookie, { expires: 14, path: '/' });
+						//jQuery.cookie('app_user_id', data.user.id, { expires: 14, path: '/' });
+						localStorage.setItem("wordpress_loggedin", data.cookie);
+						localStorage.setItem("app_user_id", data.user.id);
 						window.location.href = 'app.html';
 					} else {
 						jQuery( "#popupLogin" ).popup( "open" );
@@ -42,6 +56,29 @@ jQuery(document).ready(function(e) {
 		jQuery('#login-page').removeClass('ui-page-theme-a');
 	}
 	
+	if( jQuery('.agenda').length ){
+		jQuery('.agenda').fullCalendar({
+			header:{
+				left:   'today prev,next',
+				center: 'title',
+				right:  'agendaWeek,agendaDay'
+			},
+			businessHours: {
+				start: '08:00',
+				end: '17:00',
+				dow: [ 1, 2, 3, 4, 5, 6 ]
+			},
+			firstDay: 1,
+			defaultView: 'agendaDay',
+			allDaySlot:false,
+			height: 450,
+			lang: "es",
+			minTime:"07:00:00",
+			maxTime:"18:00:00",
+			slotLabelFormat:"h:mm",
+			hiddenDays: [ 0 ]
+		});
+	}
 	if( jQuery('.timepicker').length ){
 		jQuery('.timepicker').timepicker({
 			template: false,
@@ -52,16 +89,42 @@ jQuery(document).ready(function(e) {
 		});
 	}
 	
+	if( jQuery('#signature-pad').length ){
+		var wrapper = document.getElementById("signature-pad"),
+		clearButton = document.querySelector('[data-action="clear"]'),
+		//saveButton = document.querySelector("[data-action=save]"),
+		canvas = wrapper.querySelector("canvas"),
+		signaturePad;
+	
+		function resizeCanvas() {
+			var ratio =  Math.max(window.devicePixelRatio || 1, 1);
+			canvas.width = canvas.offsetWidth * ratio;
+			canvas.height = canvas.offsetHeight * ratio;
+			canvas.getContext("2d").scale(ratio, ratio);
+		}
+		
+		window.onresize = resizeCanvas;
+		resizeCanvas();
+		signaturePad = new SignaturePad(canvas);
+		
+		setTimeout(function(){
+			resizeCanvas();
+		},2000);
+		
+		clearButton.addEventListener("tap", function (event) {
+			signaturePad.clear();
+		});
+	}
+	
 	if( jQuery('body').hasClass('app') ){
-		check_role('administrator');
 		verify_loggedout_cookie();
 		
 		jQuery.ajax({
 			type: "POST",
 			url: ajax_url,
 			data: {
-				user : jQuery.cookie('app_user_id'),
-				action: "get_all_visitis"
+				user : localStorage.getItem('app_user_id'),
+				action: "get_visitis_per_user"
 			},
 			beforeSend: function(){
 				loading_ajax();
@@ -69,6 +132,31 @@ jQuery(document).ready(function(e) {
 			success: function (data) {
 				var tabla = '';
 				dat_ = jQuery.parseJSON(data);
+				console.log(dat_.eventos);
+				jQuery('.agenda').fullCalendar( 'destroy' );
+				jQuery('.agenda').fullCalendar({
+					header:{
+						left:   'today prev,next',
+						center: 'title',
+						right:  'agendaWeek,agendaDay'
+					},
+					businessHours: {
+						start: '08:00',
+						end: '17:00',
+						dow: [ 1, 2, 3, 4, 5, 6 ]
+					},
+					firstDay: 1,
+					defaultView: 'agendaDay',
+					allDaySlot:false,
+					height: 450,
+					lang: "es",
+					minTime:"07:00:00",
+					maxTime:"18:00:00",
+					slotLabelFormat:"h:mm",
+					hiddenDays: [ 0 ],
+					events: dat_.eventos
+				});
+				
 				for(i = 0; i < dat_.estados.length; i++){
 					
 					var fecha = dat_.estados[i].date.split('-');
@@ -81,19 +169,19 @@ jQuery(document).ready(function(e) {
 					var day = new Date(fecha[0]+'/'+(parseInt(fecha[1])-1)+'/'+fecha[2]);
 					
 					if( day.getTime() < hoy.getTime() && dat_.estados[i].state === 'pendiente' ){
-						botones = '<a href="reprogramar.html?id='+dat_.estados[i].id+'" class="btn btn-default"><i class="fa fa-clock-o"></i></a><a href="#popupDialogEstrellaO" data-rel="popup" data-position-to="window" data-transition="pop" class="btn btn-default"><i class="fa fa-star-o"></i></a><a href="#popupEliminar" data-id="'+dat_.estados[i].id+'" data-rel="popup" data-position-to="window" data-transition="pop" class="btn btn-danger del-visita"><i class="fa fa-times"></i></a>';
-					} else if( day.getTime() <= hoy.getTime() || dat_.estados[i].state === 'completado' ){
-						botones = '<a href="" class="btn btn-default disabled"><i class="fa fa-clock-o"></i></a><a href="#popupDialogEstrella" data-rel="popup" data-position-to="window" data-transition="pop" data-id="'+dat_.estados[i].id+'" class="btn btn-default verfirma"><i class="fa fa-star"></i></a><a href="#popupEliminar" data-rel="popup" data-position-to="window" data-transition="pop" data-id="'+dat_.estados[i].id+'" class="btn btn-danger del-visita"><i class="fa fa-times"></i></a>';
+						botones = '<a href="reprogramar.html?id='+dat_.estados[i].id+'" class="btn btn-default"><i class="fa fa-clock-o"></i></a><a href="#popupDialogEstrellaO" data-rel="popup" data-position-to="window" data-transition="pop" class="btn btn-default"><i class="fa fa-star-o"></i></a>';
+					} else if( day.getTime() <= hoy.getTime() && dat_.estados[i].state === 'completado' ){
+						botones = '<a href="" class="btn btn-default disabled"><i class="fa fa-clock-o"></i></a><a href="#popupDialogEstrella" data-rel="popup" data-position-to="window" data-transition="pop" class="btn btn-default"><i class="fa fa-star"></i></a>';
 					} else if( day.getTime() === hoy.getTime() ){
-						botones = '<a href="reprogramar.html?id='+dat_.estados[i].id+'" class="btn btn-default"><i class="fa fa-clock-o"></i></a><a href="#popupDialogRojo" data-rel="popup" data-position-to="window" data-transition="pop" class="btn btn-default "><i class="fa fa-bell curso"></i></a><a href="#popupEliminar" data-id="'+dat_.estados[i].id+'" data-rel="popup" data-position-to="window" data-transition="pop" class="btn btn-danger del-visita"><i class="fa fa-times"></i></a>';
+						botones = '<a href="reprogramar.html?id='+dat_.estados[i].id+'" class="btn btn-default"><i class="fa fa-clock-o"></i></a><a href="#popupDialogRojo" data-rel="popup" data-position-to="window" data-id="'+dat_.estados[i].id+'" data-transition="pop" class="btn btn-default firmar"><i class="fa fa-bell curso"></i></a>';
 					} else if( day.getTime() > hoy.getTime() ){
-						botones = '<a href="reprogramar.html?id='+dat_.estados[i].id+'" class="btn btn-default"><i class="fa fa-clock-o"></i></a><a href="#popupDialogVerde" data-rel="popup" data-position-to="window" data-transition="pop" class="btn btn-default"><i class="fa fa-bell proxima"></i></a><a href="#popupEliminar" data-id="'+dat_.estados[i].id+'" data-rel="popup" data-position-to="window" data-transition="pop" class="btn btn-danger del-visita"><i class="fa fa-times"></i></a>';
+						botones = '<a href="reprogramar.html?id='+dat_.estados[i].id+'" class="btn btn-default"><i class="fa fa-clock-o"></i></a><a href="#popupDialogVerde" data-rel="popup" data-position-to="window" data-transition="pop" class="btn btn-default"><i class="fa fa-bell proxima"></i></a>';
 					}
 					
-					tabla += '<tr><td class="col-xs-8 col-sm-8"><p>'+dat_.estados[i].title+' <span>[ '+dat_.estados[i].empleado+' ]</span></p><span>'+dat_.estados[i].date+' '+dat_.estados[i].start+'</span></td><td class="col-xs-4 col-sm-4">'+botones+'</td></tr>';
+					tabla += '<tr><td class="col-xs-8 col-sm-8"><p>'+dat_.estados[i].title+'</p><span>'+dat_.estados[i].date+' '+dat_.estados[i].start+'</span></td><td class="col-xs-4 col-sm-4">'+botones+'</td></tr>';
 				}
 				
-				jQuery('#tabla-estados tbody').html(tabla);
+				jQuery('#tabla-estados').html(tabla);
 				
 				loading_ajax({estado:false});
 			}
@@ -103,8 +191,8 @@ jQuery(document).ready(function(e) {
 			type: "POST",
 			url: ajax_url,
 			data: {
-				user : jQuery.cookie('app_user_id'),
-				action: "get_all_costumers"
+				user : localStorage.getItem('app_user_id'),
+				action: "get_costumers_per_user"
 			},
 			beforeSend: function(){
 				loading_ajax();
@@ -115,169 +203,62 @@ jQuery(document).ready(function(e) {
 				dat_ = jQuery.parseJSON(data);
 				for(i = 0; i < dat_.clientes.length; i++){
 					
-					tabla += '<tr><td class="col-xs-9 col-sm-9"><p>'+dat_.clientes[i].empresa+' <span>[ '+dat_.clientes[i].empleado+' ]</span></p><span>Encargado: '+dat_.clientes[i].nombre+'</span></td><td class="col-xs-3 col-sm-3"><a href="editar-cliente.html?id='+dat_.clientes[i].id+'" class="btn btn-default"><i class="fa fa-edit"></i></a></a><a href="#popupEliminarCliente"  data-rel="popup" data-position-to="window" data-transition="pop" data-id="'+dat_.clientes[i].id+'" class="btn btn-danger del-cliente"><i class="fa fa-times"></i></a></td></tr>';
+					tabla += '<tr><td class="col-xs-9 col-sm-9"><p>'+dat_.clientes[i].empresa+'</p><span>'+dat_.clientes[i].nombre+'</span></td><td class="col-xs-3 col-sm-3"><a href="editar-cliente.html?id='+dat_.clientes[i].id+'" class="btn btn-default"><i class="fa fa-edit"></i></a></td></tr>';
 					
 					option += '<option value="'+dat_.clientes[i].empresa+'">'+dat_.clientes[i].empresa+'</option>';
 				}
 				
-				jQuery('#mis-clientes tbody').html(tabla);
+				jQuery('#mis-clientes').html(tabla);
 				jQuery('#cliente-programar').html(option);
 				
 				loading_ajax({estado:false});
 			}
 		});
-		
+	}
+	
+	jQuery('body').delegate('.firmar','tap', function(){
+		var element = jQuery(this);
+		var id = element.data('id');
+		var url = jQuery('#popupDialogRojo .boton-editar').attr('href');
+		var parts = url.split('=');
+		parts[1] = id;
+		var new_url = parts.join('=');
+		jQuery('#popupDialogRojo .boton-editar').attr('href',new_url);
+	});
+	
+	if( jQuery('body').hasClass('reprogramacion') ){
+		verify_loggedout_cookie();
+		var id = decodeURI(get_URL_parameter('id'));
 		jQuery.ajax({
 			type: "POST",
 			url: ajax_url,
 			data: {
-				action: "get_all_users"
+				id:id,
+				action: "get_visit_data"
 			},
 			beforeSend: function(){
 				loading_ajax();
 			},
 			success: function (data) {
-				var tabla = '';
-				var option = '';
 				dat_ = jQuery.parseJSON(data);
-				for(i = 0; i < dat_.usuarios.length; i++){
-					option += '<option value="'+dat_.usuarios[i].id+'">'+dat_.usuarios[i].nombre+'</option>';
+				if( dat_[0].error ){
+					jQuery( "#popupDialogError .mensaje" ).html(data.msj);
+					jQuery( "#popupDialogError" ).popup( "open" );
+				} else {
+					jQuery('#cambio-fecha').val(dat_[0].fecha);
+					jQuery('#cambio-hora').val(dat_[0].hora);
 				}
-				
-				jQuery('#empleado-programar').html(option);
-				jQuery('#empleado-cliente').html(option);
 				loading_ajax({estado:false});
 			}
 		});
 	}
 	
-	jQuery('body').delegate('.verfirma','tap', function(){
-		var element = jQuery(this);
-		var id = element.data('id');
-		var url = jQuery('#popupDialogEstrella .boton-editar').attr('href');
-		var parts = url.split('=');
-		parts[1] = id;
-		var new_url = parts.join('=');
-		jQuery('#popupDialogEstrella .boton-editar').attr('href',new_url);
-	});
-	
-	jQuery('body').delegate('.del-cliente','tap', function(){
-		var element = jQuery(this);
-		var id = element.data('id');
-		jQuery('#popupEliminarCliente .boton-del-cliente').data('id',id);
-	});
-	
-	jQuery('body').delegate('.del-visita','tap', function(){
-		var element = jQuery(this);
-		var id = element.data('id');
-		jQuery('#popupEliminar .boton-del-visita').data('id',id);
-	});
-	
-	jQuery('body').delegate('.del-usuario','tap', function(){
-		var element = jQuery(this);
-		var id = element.data('id');
-		jQuery('#popupEliminarUsuario .boton-del-usuario').data('id',id);
-	});
-	
-	jQuery('body').delegate('.boton-del-visita','tap', function(){
-		var element = jQuery(this);
-		var id = element.data('id');
-		jQuery.ajax({
-			type: "POST",
-			url: ajax_url,
-			data: {
-				id:id,
-				action: "delete_data"
-			},
-			beforeSend: function(){
-				loading_ajax();
-			},
-			success: function (data) {
-				dat_ = jQuery.parseJSON(data);
-				if( dat_.error ){
-					jQuery( "#popupDialogError .mensaje" ).html(dat_.msj);
-					jQuery( "#popupDialogError" ).popup( "open" );
-				} else if(dat_.exito) {
-					window.location.href = 'respuestas-forms.html?#respuesta-exito';
-				} else {
-					//alert("No hay respuesta del servidor");
-					navigator.notification.alert('No hay respuesta del servidor', function(){}, 'Error','Aceptar');
-					navigator.notification.vibrate(1000);
-				}
-				loading_ajax({estado:false});
-			}
-		});
-	});
-	
-	jQuery('body').delegate('.boton-del-cliente','tap', function(){
-		var element = jQuery(this);
-		var id = element.data('id');
-		jQuery.ajax({
-			type: "POST",
-			url: ajax_url,
-			data: {
-				id:id,
-				action: "delete_data"
-			},
-			beforeSend: function(){
-				loading_ajax();
-			},
-			success: function (data) {
-				dat_ = jQuery.parseJSON(data);
-				if( dat_.error ){
-					jQuery( "#popupDialogError .mensaje" ).html(dat_.msj);
-					jQuery( "#popupDialogError" ).popup( "open" );
-				} else if(dat_.exito) {
-					window.location.href = 'respuestas-forms.html?#respuesta-exito';
-				} else {
-					//alert("No hay respuesta del servidor");
-					navigator.notification.alert('No hay respuesta del servidor', function(){}, 'Error','Aceptar');
-					navigator.notification.vibrate(1000);
-				}
-				loading_ajax({estado:false});
-			}
-		});
-	});
-	
-	jQuery('body').delegate('.boton-del-usuario','tap', function(){
-		var element = jQuery(this);
-		var id = element.data('id');
-		console.log(id);
-		return;
-		jQuery.ajax({
-			type: "POST",
-			url: ajax_url,
-			data: {
-				id:id,
-				action: "remove_user"
-			},
-			beforeSend: function(){
-				loading_ajax();
-			},
-			success: function (data) {
-				dat_ = jQuery.parseJSON(data);
-				if( dat_.error ){
-					jQuery( "#popupDialogError .mensaje" ).html(dat_.msj);
-					jQuery( "#popupDialogError" ).popup( "open" );
-				} else if(dat_.exito) {
-					window.location.href = 'respuestas-forms.html?#respuesta-exito';
-				} else {
-					//alert("No hay respuesta del servidor");
-					navigator.notification.alert('No hay respuesta del servidor', function(){}, 'Error','Aceptar');
-					navigator.notification.vibrate(1000);
-				}
-				loading_ajax({estado:false});
-			}
-		});
-	});
-	
 	jQuery('body').delegate('.programar-send-btn','tap',function(){
 		var fecha = jQuery('#cambio-fecha').val();
 		var hora = jQuery('#cambio-hora').val();
 		var cliente = jQuery('#cliente-programar').val();
-		var empleado = jQuery('#empleado-programar').val();
 		
-		if( !fecha.length || !hora.length || !cliente.length || !empleado.length ){
+		if( !fecha.length || !hora.length || !cliente.length ){
 			alert("Debes rellenar todos los campos");
 			return;
 		}
@@ -289,7 +270,7 @@ jQuery(document).ready(function(e) {
 				fecha : fecha,
 				hora : hora,
 				cliente: cliente,
-				user : empleado,
+				user : localStorage.getItem('app_user_id'),
 				action: "set_visit"
 			},
 			beforeSend: function(){
@@ -300,92 +281,6 @@ jQuery(document).ready(function(e) {
 				if( dat_.error ){
 					jQuery( "#popupDialogError2 .mensaje" ).html(dat_.msj);
 					jQuery( "#popupDialogError2" ).popup( "open" );
-				} else if(dat_.exito) {
-					window.location.href = 'respuestas-forms.html?#respuesta-exito';
-				} else {
-					//alert("No hay respuesta del servidor");
-					navigator.notification.alert('No hay respuesta del servidor', function(){}, 'Error','Aceptar');
-					navigator.notification.vibrate(1000);
-				}
-				loading_ajax({estado:false});
-			}
-		});
-	});
-	
-	jQuery('body').delegate('.crearusuario-send-btn','tap',function(){
-		var nombre = jQuery('#nombre-usuario').val();
-		var apellido = jQuery('#apellido-usuario').val();
-		var nickname = jQuery('#nickname-usuario').val();
-		var email = jQuery('#email-usuario').val();
-		var tipo = jQuery('#tipo-usuario').val();
-		
-		if( !nombre.length || !apellido.length || !nickname.length || !email.length || !tipo.length ){
-			alert("Debes rellenar todos los campos");
-			return;
-		}
-		
-		jQuery.ajax({
-			type: "POST",
-			url: ajax_url,
-			data: {
-				nombre : nombre,
-				apellido : apellido,
-				nickname: nickname,
-				email: email,
-				tipo : tipo,
-				action: "crear_usuario"
-			},
-			beforeSend: function(){
-				loading_ajax();
-			},
-			success: function (data) {
-				dat_ = jQuery.parseJSON(data);
-				if( dat_.error ){
-					jQuery( "#popupDialogError .mensaje" ).html(dat_.msj);
-					jQuery( "#popupDialogError" ).popup( "open" );
-				} else if(dat_.exito) {
-					window.location.href = 'respuestas-forms.html?#respuesta-exito';
-				} else {
-					//alert("No hay respuesta del servidor");
-					navigator.notification.alert('No hay respuesta del servidor', function(){}, 'Error','Aceptar');
-					navigator.notification.vibrate(1000);
-				}
-				loading_ajax({estado:false});
-			}
-		});
-	});
-	
-	jQuery('body').delegate('.editarusuario-send-btn','tap',function(){
-		var nombre = jQuery('#nombre-usuario').val();
-		var apellido = jQuery('#apellido-usuario').val();
-		var email = jQuery('#email-usuario').val();
-		var tipo = jQuery('#tipo-usuario').val();
-		var id = get_URL_parameter('id');
-		
-		if( !nombre.length || !apellido.length || !email.length || !tipo.length ){
-			alert("Debes rellenar todos los campos");
-			return;
-		}
-		
-		jQuery.ajax({
-			type: "POST",
-			url: ajax_url,
-			data: {
-				id : id,
-				nombre : nombre,
-				apellido : apellido,
-				email: email,
-				tipo : tipo,
-				action: "edit_usuario"
-			},
-			beforeSend: function(){
-				loading_ajax();
-			},
-			success: function (data) {
-				dat_ = jQuery.parseJSON(data);
-				if( dat_.error ){
-					jQuery( "#popupDialogError .mensaje" ).html(dat_.msj);
-					jQuery( "#popupDialogError" ).popup( "open" );
 				} else if(dat_.exito) {
 					window.location.href = 'respuestas-forms.html?#respuesta-exito';
 				} else {
@@ -417,7 +312,7 @@ jQuery(document).ready(function(e) {
 				hora : hora,
 				motivo: motivo,
 				id:id,
-				user : jQuery.cookie('app_user_id'),
+				user : localStorage.getItem('app_user_id'),
 				action: "reset_visit"
 			},
 			beforeSend: function(){
@@ -440,100 +335,16 @@ jQuery(document).ready(function(e) {
 		});
 	});
 	
+	
+	if( jQuery('body').hasClass('edit-cliente') ){
+		verify_loggedout_cookie();
+	}
+	
 	jQuery('body').delegate('.edit-send-btn','tap', function(){
-		var encargado = jQuery('#nombre-encargado').val();
-		var email = jQuery('#email-encargado').val();
-		var empleado = jQuery('#empleado-programar').val();
+		var cambios = jQuery('#cambio-solicitud').val();
 		var id = decodeURI(get_URL_parameter('id'));
 		
-		if( !encargado.length || !email.length ){
-			alert("Debes rellenar los campos");
-			return;
-		}
-		
-		jQuery.ajax({
-			type: "POST",
-			url: ajax_url,
-			data: {
-				id:id,
-				encargado : encargado,
-				email : email,
-				empleado : empleado,
-				action: "edit_costumer"
-			},
-			beforeSend: function(){
-				loading_ajax();
-			},
-			success: function (data) {
-				dat_ = jQuery.parseJSON(data);
-				if( dat_.error ){
-					jQuery( "#popupDialogError .mensaje" ).html( dat_.msj );
-					jQuery( "#popupDialogError" ).popup( "open" );
-				} else if(dat_.exito) {
-					window.location.href = 'respuestas-forms.html?#respuesta-exito';
-				} else {
-					//alert("No hay respuesta del servidor");
-					navigator.notification.alert('No hay respuesta del servidor', function(){}, 'Error','Aceptar');
-					navigator.notification.vibrate(1000);
-				}
-				loading_ajax({estado:false});
-			}
-		});
-		return false;
-	});
-	
-	jQuery('body').delegate('.editcliente-send-btn','tap', function(){
-		var empresa = jQuery('#empresa-registrar').val();
-		var encargado = jQuery('#nombre-encargado').val();
-		var email = jQuery('#email-encargado').val();
-		var empleado = jQuery('#empleado-cliente').val();
-		
-		console.log(empresa);
-		console.log(encargado);
-		console.log(email);
-		console.log(empleado);
-		
-		if( !encargado.length || !email.length || !empresa.length ){
-			alert("Debes rellenar los campos");
-			return;
-		}
-		
-		jQuery.ajax({
-			type: "POST",
-			url: ajax_url,
-			data: {
-				empresa : empresa,
-				encargado : encargado,
-				email : email,
-				empleado : empleado,
-				action: "add_costumer"
-			},
-			beforeSend: function(){
-				loading_ajax();
-			},
-			success: function (data) {
-				dat_ = jQuery.parseJSON(data);
-				if( dat_.error ){
-					jQuery( "#popupDialogError .mensaje" ).html( dat_.msj );
-					jQuery( "#popupDialogError" ).popup( "open" );
-				} else if(dat_.exito) {
-					window.location.href = 'respuestas-forms.html?#respuesta-exito';
-				} else {
-					//alert("No hay respuesta del servidor");
-					navigator.notification.alert('No hay respuesta del servidor', function(){}, 'Error','Aceptar');
-					navigator.notification.vibrate(1000);
-				}
-				loading_ajax({estado:false});
-			}
-		});
-		return false;
-	});
-	
-	jQuery('body').delegate('.cambiopass-send-btn','tap', function(){
-		var pass = jQuery('#nuevo-pass').val();
-		var id = decodeURI(get_URL_parameter('id'));
-		
-		if( !pass.length || !id.length ){
+		if( !cambios.length ){
 			alert("Debes rellenar el campo");
 			return;
 		}
@@ -542,9 +353,10 @@ jQuery(document).ready(function(e) {
 			type: "POST",
 			url: ajax_url,
 			data: {
-				user:id,
-				password : pass,
-				action: "set_password"
+				id:id,
+				cambios : cambios,
+				user : localStorage.getItem('app_user_id'),
+				action: "query_user_changes"
 			},
 			beforeSend: function(){
 				loading_ajax();
@@ -566,102 +378,6 @@ jQuery(document).ready(function(e) {
 		});
 		return false;
 	});
-	
-	jQuery('body').delegate('.logout','clic tap',function(){
-		loading_ajax();
-		jQuery.removeCookie('wordpress_loggedin_admin');
-		jQuery.removeCookie('app_user_id');
-		if (!jQuery.cookie('wordpress_loggedin_admin') && !jQuery.cookie('app_user_id')) {
-			window.location.href = 'index.html';
-		} else {
-			jQuery.cookie('wordpress_loggedin_admin', '', { expires: 0, path: '/' });
-			jQuery.cookie('app_user_id', 0, { expires: 0, path: '/' });
-			window.location.href = 'index.html';
-		}
-	});
-	
-	if( jQuery('body').hasClass('edit-cliente') ){
-		verify_loggedout_cookie();
-		var id = decodeURI(get_URL_parameter('id'));
-		jQuery.ajax({
-			type: "POST",
-			url: ajax_url,
-			data: {
-				id:id,
-				action: "get_direct_costumer_data"
-			},
-			beforeSend: function(){
-				loading_ajax();
-			},
-			success: function (data) {
-				dat_ = jQuery.parseJSON(data);
-				if( dat_[0].error ){
-					jQuery( "#popupDialogError .mensaje" ).html(data.msj);
-					jQuery( "#popupDialogError" ).popup( "open" );
-				} else {
-					jQuery('#nombre-empresa').html(dat_[0].empresa);
-					jQuery('#nombre-encargado').val(dat_[0].encargado);
-					jQuery('#email-encargado').val(dat_[0].email);
-					
-					jQuery.ajax({
-						type: "POST",
-						url: ajax_url,
-						data: {
-							action: "get_all_users"
-						},
-						beforeSend: function(){
-							loading_ajax();
-						},
-						success: function (data2) {
-							var tabla = '';
-							var option = '';
-							dat2_ = jQuery.parseJSON(data2);
-							for(i = 0; i < dat2_.usuarios.length; i++){
-								option += '<option value="'+dat2_.usuarios[i].id+'"';
-								if( dat_[0].empleado == dat2_.usuarios[i].id ){
-									option += ' selected';
-								}
-								option += '>'+dat2_.usuarios[i].nombre+'</option>';
-							}
-							
-							jQuery('#empleado-programar').html(option);
-							
-							loading_ajax({estado:false});
-						}
-					});
-					
-				}
-				loading_ajax({estado:false});
-			}
-		});
-	}
-	
-	if( jQuery('body').hasClass('reprogramacion') ){
-		verify_loggedout_cookie();
-		var id = decodeURI(get_URL_parameter('id'));
-		jQuery.ajax({
-			type: "POST",
-			url: ajax_url,
-			data: {
-				id:id,
-				action: "get_visit_data"
-			},
-			beforeSend: function(){
-				loading_ajax();
-			},
-			success: function (data) {
-				dat_ = jQuery.parseJSON(data);
-				if( dat_[0].error ){
-					jQuery( "#popupDialogError .mensaje" ).html(data.msj);
-					jQuery( "#popupDialogError" ).popup( "open" );
-				} else {
-					jQuery('#cambio-fecha').val(dat_[0].fecha);
-					jQuery('#cambio-hora').val(dat_[0].hora);
-				}
-				loading_ajax({estado:false});
-			}
-		});
-	}
 	
 	if( jQuery('body').hasClass('firma') ){
 		verify_loggedout_cookie();
@@ -671,7 +387,7 @@ jQuery(document).ready(function(e) {
 			url: ajax_url,
 			data: {
 				id:id,
-				action: "get_comprobante_data"
+				action: "get_costumer_data"
 			},
 			beforeSend: function(){
 				loading_ajax();
@@ -682,99 +398,58 @@ jQuery(document).ready(function(e) {
 					jQuery( "#popupDialogError .mensaje" ).html(data.msj);
 					jQuery( "#popupDialogError" ).popup( "open" );
 				} else {
-					jQuery('#fecha_visita').html(dat_[0].fecha);
-					jQuery('#hora_visita').html(dat_[0].hora);
-					jQuery('#encargado_visita').html(dat_[0].encargado);
-					jQuery('#email_visita').html(dat_[0].email);
-					jQuery('#comentarios_visita').html(dat_[0].comentarios);
-					jQuery('#firma').html('<img src="'+dat_[0].firma+'" width="100%" />');
+					jQuery('#nombre_encargado').val(dat_[0].encargado);
+					jQuery('#email_encargado').val(dat_[0].email);
 				}
 				loading_ajax({estado:false});
 			}
 		});
 	}
 	
-	if( jQuery('body').hasClass('usuarios') ){
-		verify_loggedout_cookie();
-		check_role('administrator');
-		
-		jQuery.ajax({
-			type: "POST",
-			url: ajax_url,
-			data: {
-				action: "get_all_users"
-			},
-			beforeSend: function(){
-				loading_ajax();
-			},
-			success: function (data) {
-				dat_ = jQuery.parseJSON(data);
-				if( dat_.error ){
-					jQuery( "#popupDialogError .mensaje" ).html(data.msj);
-					jQuery( "#popupDialogError" ).popup( "open" );
-				} else {
-					var tabla = '';
-					dat_ = jQuery.parseJSON(data);
-					for(i = 0; i < dat_.usuarios.length; i++){
-						
-						tabla += '<tr><td class="col-xs-6 col-sm-6"><p>'+dat_.usuarios[i].nombre+' </p></td><td class="col-xs-6 col-sm-6"><a href="editar-usuario.html?id='+dat_.usuarios[i].id+'" class="btn btn-default"><i class="fa fa-edit"></i></a><a href="cambio-pass.html?id='+dat_.usuarios[i].id+'&user='+encodeURI(dat_.usuarios[i].nombre)+'" class="btn btn-success del-cliente"><i class="fa fa-asterisk"></i></a><a href="#popupEliminarUsuario"  data-rel="popup" data-position-to="window" data-transition="pop" data-id="'+dat_.usuarios[i].id+'" class="btn btn-danger del-usuario"><i class="fa fa-times"></i></a></td></tr>';
-						
-					}
-					
-					jQuery('#tabla-usuarios tbody').html(tabla);
-				}
-				loading_ajax({estado:false});
-			}
-		});
-	}
-	
-	if( jQuery('body').hasClass('cambio-pass') ){
-		verify_loggedout_cookie();
-		check_role('administrator');
-		var user = get_URL_parameter('id');
-		var nombre = decodeURI( get_URL_parameter('user') );
-		jQuery('#usuario').html(nombre);
-	}
-	
-	if( jQuery('body').hasClass('edita-usuario') ){
-		verify_loggedout_cookie();
-		check_role('administrator');
+	jQuery('body').delegate('.firma-send-btn','tap', function(){
+		var nombre = jQuery('#nombre_encargado').val();
+		var email = jQuery('#email_encargado').val();
+		var comentarios = jQuery('#comentarios_visitas').val();
 		var id = decodeURI(get_URL_parameter('id'));
+		var img = signaturePad.toDataURL();
+		
+		if( !nombre.length || !email.length || !comentarios.length || !img.length || !id.length ){
+			alert("Debes rellenar los campos y haber firmado");
+			return;
+		}
 		
 		jQuery.ajax({
 			type: "POST",
 			url: ajax_url,
 			data: {
-				id:id,
-				action: "get_user_data"
+				nombre : nombre,
+				email : email,
+				id : id,
+				comentarios : comentarios,
+				img : img,
+				user : localStorage.getItem('app_user_id'),
+				action: "comprobar_visita"
 			},
 			beforeSend: function(){
 				loading_ajax();
 			},
 			success: function (data) {
 				dat_ = jQuery.parseJSON(data);
-				console.log(dat_);
 				if( dat_.error ){
-					jQuery( "#popupDialogError .mensaje" ).html(data.msj);
+					jQuery( "#popupDialogError .mensaje" ).html( dat_.msj );
 					jQuery( "#popupDialogError" ).popup( "open" );
+				} else if(dat_.exito) {
+					window.location.href = 'respuestas-forms.html?#respuesta-exito';
 				} else {
-					jQuery("#nombre-usuario").val(dat_.user.nombre);
-					jQuery("#apellido-usuario").val(dat_.user.apellido);
-					jQuery("#email-usuario").val(dat_.user.email);
-					jQuery("#nickname-usuario").val(dat_.user.nickname);
-					
-					jQuery("#tipo-usuario option").each(function() {
-						var element = jQuery(this);
-						if( element.val() == dat_.user.role ){
-							element.attr('selected','selected');
-						}
-					});
+					//alert("No hay respuesta del servidor");
+					navigator.notification.alert('No hay respuesta del servidor', function(){}, 'Error','Aceptar');
+					navigator.notification.vibrate(1000);
 				}
 				loading_ajax({estado:false});
 			}
 		});
-	}
-	
+		return false;
+	});
 });
 
 function get_nonce(){
@@ -796,13 +471,13 @@ function get_nonce(){
 }
 
 function verify_loggedin_cookie(){
-	if (jQuery.cookie('wordpress_loggedin_admin')) {
+	if (localStorage.getItem('wordpress_loggedin')) {
 		window.location.href = 'app.html';
 	}
 }
 
 function verify_loggedout_cookie(){
-	if (!jQuery.cookie('wordpress_loggedin_admin')) {
+	if (!localStorage.getItem('wordpress_loggedin')) {
 		window.location.href = 'index.html';
 	}
 }
@@ -834,27 +509,20 @@ function get_URL_parameter(sParam){
 	}
 }
 
-function check_role(role){
-	user = jQuery.cookie('app_user_id');
-	jQuery.ajax({
-		type: "POST",
-		data: {
-			role : role,
-			user : user,
-			action : 'lockout_app'
-		},
-		url: ajax_url,
-		beforeSend: function(){
-			loading_ajax();
-		},
-		success: function (data) {
-			dat_ = jQuery.parseJSON(data);
-			loading_ajax({estado:false});
-			if( dat_.error == "1" ){
-				jQuery.removeCookie('wordpress_loggedin_admin');
-				jQuery.removeCookie('app_user_id');
-				window.location.href = 'index.html';
-			}
-		}
-	});
-}
+/*function checkConnection() {
+    var networkState = navigator.connection.type;
+
+    var states = {};
+    states[Connection.UNKNOWN]  = 'Unknown connection';
+    states[Connection.ETHERNET] = 'Ethernet connection';
+    states[Connection.WIFI]     = 'WiFi connection';
+    states[Connection.CELL_2G]  = 'Cell 2G connection';
+    states[Connection.CELL_3G]  = 'Cell 3G connection';
+    states[Connection.CELL_4G]  = 'Cell 4G connection';
+    states[Connection.NONE]     = 'No network connection';
+	
+	if( states[networkState] === states[Connection.UNKNOWN] || states[networkState] === states[Connection.NONE] ){
+		navigator.notification.alert('No hay Conexión a internet', function(){}, 'Error','Aceptar');
+		navigator.notification.vibrate(1000);
+	}
+}*/
