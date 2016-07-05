@@ -8,6 +8,7 @@ body.firma {-moz-user-select: none; -webkit-user-select: none; -ms-user-select: 
 .ui-page-theme-g .ui-body-inherit {background-color:#fff!important; border-color:transparent!important; color:#333!important; text-shadow: 0px 0px 0px transparent!important;}
 .ui-shadow-inset {-webkit-box-shadow: 0px 0px 0px transparent!important; -moz-box-shadow: 0px 0px 0px transparent!important; box-shadow: 0px 0px 0px transparent!important;}
 .text-input {border:0px solid transparent!important; padding:10px!important; margin:3px!important; outline:none!important;}
+.text-input[readonly] {background-color:#eee;}
 .text-input::-webkit-input-placeholder {color: #999; font-size:18px;}
 .text-input::-moz-placeholder {font-size:18px; color: #999;}
 .text-input::-ms-input-placeholder {font-size:18px; color: #999;}
@@ -25,6 +26,8 @@ div[data-role="footer"] ul li a.ui-btn-active {background-color:#eee;}
 .tabla-visitas p {color:#333; font-size:16px;}
 .tabla-visitas span {color:#bbb; font-size:15px;}
 .tabla-visitas .fa {color:#999;}
+.btn-danger .fa {color:#fff;}
+.btn-success .fa {color:#fff;}
 i.fa.proxima {color:#2CC706;}
 i.fa.curso {color:#A00000;}
 .red-btn {background-color:#DC0003; color:#fff!important; text-shadow:none!important; padding:13px;}

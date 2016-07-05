@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<widget xmlns = "http://www.w3.org/ns/widgets" xmlns:gap = "http://phonegap.com/ns/1.0" id = "com.phonegap.romachemicaluser" version = "1.0.0">
+<widget xmlns = "http://www.w3.org/ns/widgets" xmlns:gap = "http://phonegap.com/ns/1.0" id = "com.phonegap.romachemicaladmin" version = "1.0.0">
 
-    <name>RomaChemical Visitas</name>
+    <name>Admin RomaChemical Visitas</name>
 
     <description>
-        Esta aplicación está destinada para que los empleados de la empresa Roma Chemical tengan control sobre las visitas a sus clientes.
+        Esta aplicación está destinada para que los administradores de la empresa Roma Chemical tengan control sobre las visitas a sus clientes y de sus empleados.
     </description>
 
     <author href="http://laeliteweb.com" email="info@laeliteweb.com">
@@ -41,7 +41,6 @@
     <gap:plugin name="org.apache.cordova.network-information" value="org.apache.cordova.network-information" />
     <gap:plugin name="org.apache.cordova.splashscreen" value="org.apache.cordova.splashscreen" />
     <gap:plugin name="org.apache.cordova.vibration" value="org.apache.cordova.vibration" />
-	<gap:plugin name="com.ionic.keyboard" source="pgb" />
 
     <!-- Define app icon for each platform. -->
     <icon src="icon.png" />
@@ -60,7 +59,7 @@
     
 	<access uri="*" subdomains="true" />
 	<access origin="http://romachemical.laeliteweb.com" />
-    <plugin name="cordova-plugin-whitelist" version="1" />
+    <gap:plugin name="cordova-plugin-whitelist" version="1" />
     <allow-intent href="http://*/*" />
     <allow-intent href="https://*/*" />
     <allow-intent href="tel:*" />

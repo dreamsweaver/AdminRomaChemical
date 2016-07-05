@@ -18,7 +18,7 @@
 <!-- Respuestas forms éxito -->
 <div data-role="page" data-theme="g" id="respuesta-exito" data-url="respuesta-exito" >
 	<div data-role="header">
-		<h1>Main</h1>
+		<h1>Admin Main</h1>
 		<a href="" class="logout ui-link ui-btn-right ui-btn ui-shadow ui-corner-all">Salir <i class="fa fa-sign-out"></i></a>
 	</div>
 	<div role="main" class="ui-content">
@@ -43,6 +43,36 @@
 	</div>
 	<div data-role="footer" data-position="fixed">
 		<a href="app.html" class="ui-btn ui-icon-back ui-btn-icon-left full-btn red-btn">Regresar</a>
+	</div>
+</div>
+<!-- Respuestas forms éxito -->
+<div data-role="page" data-theme="g" id="respuesta-error" data-url="respuesta-error" >
+	<div data-role="header">
+		<h1>Admin Main</h1>
+		<a href="" class="logout ui-link ui-btn-right ui-btn ui-shadow ui-corner-all">Salir <i class="fa fa-sign-out"></i></a>
+	</div>
+	<div role="main" class="ui-content">
+		<div class="container">
+			<div class="row">
+				<br>
+				<div class="col-xs-10 col-sm-10">
+						<img src="images/logo.png" class="responsive" />
+				</div>
+				<div class="col-xs-2 col-sm-2">
+					<a href="app.html" class="btn btn-default"><i class="fa fa-bars"></i></a>
+				</div>
+				<div class="col-xs-12 col-sm-12">
+					<h2 class="centered-title strong">Error en el envío</h2>
+					<p class="centered-title">No se ha realizado la operación solicitada. Por favor vuelva a intentarlo nuevamente</p>
+				</div>
+				<div class="col-xs-12 col-sm-12">
+					<h1 class="error-response"><i class="fa fa-times-circle"></i></h1>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div data-role="footer" data-position="fixed">
+		<a href="javascript:history.back();" class="ui-btn ui-icon-back ui-btn-icon-left full-btn red-btn">Regresar</a>
 	</div>
 </div>
 <script type="text/javascript" src="js/jquery-1.12.4.min.js"></script>
