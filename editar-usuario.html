@@ -18,6 +18,7 @@
 <!-- Reprogramar visita -->
 <div data-role="page" data-theme="g" id="editar-usuario" data-url="editar-usuario" >
 	<div data-role="header">
+		<a href="" class="reload ui-link ui-btn-left ui-btn ui-shadow ui-corner-all"><i class="fa fa-refresh"></i></a>
 		<h1>Admin Main</h1>
 		<a href="" class="logout ui-link ui-btn-right ui-btn ui-shadow ui-corner-all">Salir <i class="fa fa-sign-out"></i></a>
 	</div>
@@ -50,8 +51,8 @@
 						<label for="tipo-usuario">Rol de empleado</label>
 						<select id="tipo-usuario" name="tipo-usuario">
 							<option value="administrator">Administrador</option>
-							<option value="contributor">Soporte técnico</option>
-							<option value="subscriber">Visitador</option>
+							<option value="author">Soporte técnico</option>
+							<option value="contributor">Visitador</option>
 						</select>
 					</form>
 					<div data-role="popup" id="popupDialogError" data-overlay-theme="a" data-theme="a" data-dismissible="false" style="max-width:400px;">

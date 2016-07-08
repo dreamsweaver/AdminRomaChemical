@@ -8,6 +8,9 @@ function onDeviceReady() {
 }
 
 jQuery(document).ready(function(e) {
+	jQuery('body').delegate('.reload','tap',function(){
+		window.location.reload();
+	});
 	
 	if( jQuery('body').hasClass('home') ){
 		verify_loggedin_cookie();
