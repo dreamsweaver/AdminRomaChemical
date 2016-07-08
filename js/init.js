@@ -4,6 +4,7 @@ ajax_url = url_base+'wp-admin/admin-ajax.php';
 
 document.addEventListener("deviceready", onDeviceReady, false);
 function onDeviceReady() {
+	checkConnection();
 	setInterval(function(){checkConnection();},30000);
 }
 
@@ -91,11 +92,11 @@ jQuery(document).ready(function(e) {
 					
 					if( day.getTime() < hoy.getTime() && dat_.estados[i].state === 'pendiente' ){
 						botones = '<a href="reprogramar.html?id='+dat_.estados[i].id+'" class="btn btn-default"><i class="fa fa-clock-o"></i></a><a href="#popupDialogEstrellaO" data-rel="popup" data-position-to="window" data-transition="pop" class="btn btn-default"><i class="fa fa-star-o"></i></a><a href="#popupEliminar" data-id="'+dat_.estados[i].id+'" data-rel="popup" data-position-to="window" data-transition="pop" class="btn btn-danger del-visita"><i class="fa fa-times"></i></a>';
-					} else if( day.getTime() <= hoy.getTime() || dat_.estados[i].state === 'completado' ){
+					} else if( day.getTime() <= hoy.getTime() && dat_.estados[i].state === 'completado' ){
 						botones = '<a href="" class="btn btn-default disabled"><i class="fa fa-clock-o"></i></a><a href="#popupDialogEstrella" data-rel="popup" data-position-to="window" data-transition="pop" data-id="'+dat_.estados[i].id+'" class="btn btn-default verfirma"><i class="fa fa-star"></i></a><a href="#popupEliminar" data-rel="popup" data-position-to="window" data-transition="pop" data-id="'+dat_.estados[i].id+'" class="btn btn-danger del-visita"><i class="fa fa-times"></i></a>';
-					} else if( day.getTime() === hoy.getTime() ){
+					} else if( day.getTime() === hoy.getTime() && dat_.estados[i].state === 'pendiente' ){
 						botones = '<a href="reprogramar.html?id='+dat_.estados[i].id+'" class="btn btn-default"><i class="fa fa-clock-o"></i></a><a href="#popupDialogRojo" data-rel="popup" data-position-to="window" data-transition="pop" class="btn btn-default "><i class="fa fa-bell curso"></i></a><a href="#popupEliminar" data-id="'+dat_.estados[i].id+'" data-rel="popup" data-position-to="window" data-transition="pop" class="btn btn-danger del-visita"><i class="fa fa-times"></i></a>';
-					} else if( day.getTime() > hoy.getTime() ){
+					} else if( day.getTime() > hoy.getTime() && dat_.estados[i].state === 'pendiente' ){
 						botones = '<a href="reprogramar.html?id='+dat_.estados[i].id+'" class="btn btn-default"><i class="fa fa-clock-o"></i></a><a href="#popupDialogVerde" data-rel="popup" data-position-to="window" data-transition="pop" class="btn btn-default"><i class="fa fa-bell proxima"></i></a><a href="#popupEliminar" data-id="'+dat_.estados[i].id+'" data-rel="popup" data-position-to="window" data-transition="pop" class="btn btn-danger del-visita"><i class="fa fa-times"></i></a>';
 					}
 					
