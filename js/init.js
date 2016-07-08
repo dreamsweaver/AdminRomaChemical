@@ -81,7 +81,7 @@ jQuery(document).ready(function(e) {
 			success: function (data) {
 				var tabla = '';
 				dat_ = jQuery.parseJSON(data);
-				console.log(dat_);
+				//console.log(dat_);
 				if( dat_.estados ){
 					for(i = 0; i < dat_.estados.length; i++){
 						
@@ -94,10 +94,10 @@ jQuery(document).ready(function(e) {
 						var hoy = new Date(anio+'/'+mes+'/'+dia);
 						var day = new Date(fecha[0]+'/'+(parseInt(fecha[1])-1)+'/'+fecha[2]);
 						
-						console.log(day.getTime() < hoy.getTime());
-						console.log(day.getTime() > hoy.getTime());
-						console.log(day.getTime() === hoy.getTime());
-						console.log(dat_.estados[i].state);
+						//console.log(day.getTime() < hoy.getTime());
+						//console.log(day.getTime() > hoy.getTime());
+						//console.log(day.getTime() === hoy.getTime());
+						//console.log(dat_.estados[i].state);
 						
 						if( day.getTime() < hoy.getTime() && dat_.estados[i].state !== 'completado' ){
 							botones = '<a href="reprogramar.html?id='+dat_.estados[i].id+'" class="btn btn-default"><i class="fa fa-clock-o"></i></a><a href="#popupDialogEstrellaO" data-rel="popup" data-position-to="window" data-transition="pop" class="btn btn-default"><i class="fa fa-star-o"></i></a><a href="#popupEliminar" data-id="'+dat_.estados[i].id+'" data-rel="popup" data-position-to="window" data-transition="pop" class="btn btn-danger del-visita"><i class="fa fa-times"></i></a>';
