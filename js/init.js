@@ -22,6 +22,7 @@ jQuery(document).ready(function(e) {
 			var user = jQuery('#user').val();
 			jQuery.ajax({
 				type: "POST",
+				cache:false,
 				data: {
 					nonce : nonce,
 					username : user,
@@ -69,6 +70,7 @@ jQuery(document).ready(function(e) {
 		jQuery.ajax({
 			type: "POST",
 			url: ajax_url,
+			cache:false,
 			data: {
 				user : jQuery.cookie('app_user_id'),
 				action: "get_all_visitis"
@@ -79,32 +81,33 @@ jQuery(document).ready(function(e) {
 			success: function (data) {
 				var tabla = '';
 				dat_ = jQuery.parseJSON(data);
-				for(i = 0; i < dat_.estados.length; i++){
-					
-					var fecha = dat_.estados[i].date.split('-');
-					var date = new Date();
-					var dia = date.getDate();
-					var mes = date.getMonth();
-					var anio = date.getFullYear();
-					
-					var hoy = new Date(anio+'/'+mes+'/'+dia);
-					var day = new Date(fecha[0]+'/'+(parseInt(fecha[1])-1)+'/'+fecha[2]);
-					
-					if( day.getTime() < hoy.getTime() && dat_.estados[i].state === 'pendiente' ){
-						botones = '<a href="reprogramar.html?id='+dat_.estados[i].id+'" class="btn btn-default"><i class="fa fa-clock-o"></i></a><a href="#popupDialogEstrellaO" data-rel="popup" data-position-to="window" data-transition="pop" class="btn btn-default"><i class="fa fa-star-o"></i></a><a href="#popupEliminar" data-id="'+dat_.estados[i].id+'" data-rel="popup" data-position-to="window" data-transition="pop" class="btn btn-danger del-visita"><i class="fa fa-times"></i></a>';
-					} else if( day.getTime() <= hoy.getTime() && dat_.estados[i].state === 'completado' ){
-						botones = '<a href="" class="btn btn-default disabled"><i class="fa fa-clock-o"></i></a><a href="#popupDialogEstrella" data-rel="popup" data-position-to="window" data-transition="pop" data-id="'+dat_.estados[i].id+'" class="btn btn-default verfirma"><i class="fa fa-star"></i></a><a href="#popupEliminar" data-rel="popup" data-position-to="window" data-transition="pop" data-id="'+dat_.estados[i].id+'" class="btn btn-danger del-visita"><i class="fa fa-times"></i></a>';
-					} else if( day.getTime() === hoy.getTime() && dat_.estados[i].state === 'pendiente' ){
-						botones = '<a href="reprogramar.html?id='+dat_.estados[i].id+'" class="btn btn-default"><i class="fa fa-clock-o"></i></a><a href="#popupDialogRojo" data-rel="popup" data-position-to="window" data-transition="pop" class="btn btn-default "><i class="fa fa-bell curso"></i></a><a href="#popupEliminar" data-id="'+dat_.estados[i].id+'" data-rel="popup" data-position-to="window" data-transition="pop" class="btn btn-danger del-visita"><i class="fa fa-times"></i></a>';
-					} else if( day.getTime() > hoy.getTime() && dat_.estados[i].state === 'pendiente' ){
-						botones = '<a href="reprogramar.html?id='+dat_.estados[i].id+'" class="btn btn-default"><i class="fa fa-clock-o"></i></a><a href="#popupDialogVerde" data-rel="popup" data-position-to="window" data-transition="pop" class="btn btn-default"><i class="fa fa-bell proxima"></i></a><a href="#popupEliminar" data-id="'+dat_.estados[i].id+'" data-rel="popup" data-position-to="window" data-transition="pop" class="btn btn-danger del-visita"><i class="fa fa-times"></i></a>';
+				if( dat_.estados ){
+					for(i = 0; i < dat_.estados.length; i++){
+						
+						var fecha = dat_.estados[i].date.split('-');
+						var date = new Date();
+						var dia = date.getDate();
+						var mes = date.getMonth();
+						var anio = date.getFullYear();
+						
+						var hoy = new Date(anio+'/'+mes+'/'+dia);
+						var day = new Date(fecha[0]+'/'+(parseInt(fecha[1])-1)+'/'+fecha[2]);
+						
+						if( day.getTime() < hoy.getTime() && dat_.estados[i].state === 'pendiente' ){
+							botones = '<a href="reprogramar.html?id='+dat_.estados[i].id+'" class="btn btn-default"><i class="fa fa-clock-o"></i></a><a href="#popupDialogEstrellaO" data-rel="popup" data-position-to="window" data-transition="pop" class="btn btn-default"><i class="fa fa-star-o"></i></a><a href="#popupEliminar" data-id="'+dat_.estados[i].id+'" data-rel="popup" data-position-to="window" data-transition="pop" class="btn btn-danger del-visita"><i class="fa fa-times"></i></a>';
+						} else if( day.getTime() <= hoy.getTime() && dat_.estados[i].state === 'completado' ){
+							botones = '<a href="" class="btn btn-default disabled"><i class="fa fa-clock-o"></i></a><a href="#popupDialogEstrella" data-rel="popup" data-position-to="window" data-transition="pop" data-id="'+dat_.estados[i].id+'" class="btn btn-default verfirma"><i class="fa fa-star"></i></a><a href="#popupEliminar" data-rel="popup" data-position-to="window" data-transition="pop" data-id="'+dat_.estados[i].id+'" class="btn btn-danger del-visita"><i class="fa fa-times"></i></a>';
+						} else if( day.getTime() === hoy.getTime() && dat_.estados[i].state === 'pendiente' ){
+							botones = '<a href="reprogramar.html?id='+dat_.estados[i].id+'" class="btn btn-default"><i class="fa fa-clock-o"></i></a><a href="#popupDialogRojo" data-rel="popup" data-position-to="window" data-transition="pop" class="btn btn-default "><i class="fa fa-bell curso"></i></a><a href="#popupEliminar" data-id="'+dat_.estados[i].id+'" data-rel="popup" data-position-to="window" data-transition="pop" class="btn btn-danger del-visita"><i class="fa fa-times"></i></a>';
+						} else if( day.getTime() > hoy.getTime() && dat_.estados[i].state === 'pendiente' ){
+							botones = '<a href="reprogramar.html?id='+dat_.estados[i].id+'" class="btn btn-default"><i class="fa fa-clock-o"></i></a><a href="#popupDialogVerde" data-rel="popup" data-position-to="window" data-transition="pop" class="btn btn-default"><i class="fa fa-bell proxima"></i></a><a href="#popupEliminar" data-id="'+dat_.estados[i].id+'" data-rel="popup" data-position-to="window" data-transition="pop" class="btn btn-danger del-visita"><i class="fa fa-times"></i></a>';
+						}
+						
+						tabla += '<tr><td class="col-xs-8 col-sm-8"><p>'+dat_.estados[i].title+' <span>[ '+dat_.estados[i].empleado+' ]</span></p><span>'+dat_.estados[i].date+' '+dat_.estados[i].start+'</span></td><td class="col-xs-4 col-sm-4">'+botones+'</td></tr>';
 					}
 					
-					tabla += '<tr><td class="col-xs-8 col-sm-8"><p>'+dat_.estados[i].title+' <span>[ '+dat_.estados[i].empleado+' ]</span></p><span>'+dat_.estados[i].date+' '+dat_.estados[i].start+'</span></td><td class="col-xs-4 col-sm-4">'+botones+'</td></tr>';
+					jQuery('#tabla-estados tbody').html(tabla);
 				}
-				
-				jQuery('#tabla-estados tbody').html(tabla);
-				
 				loading_ajax({estado:false});
 			}
 		});
@@ -112,6 +115,7 @@ jQuery(document).ready(function(e) {
 		jQuery.ajax({
 			type: "POST",
 			url: ajax_url,
+			cache:false,
 			data: {
 				user : jQuery.cookie('app_user_id'),
 				action: "get_all_costumers"
@@ -123,15 +127,17 @@ jQuery(document).ready(function(e) {
 				var tabla = '';
 				var option = '';
 				dat_ = jQuery.parseJSON(data);
-				for(i = 0; i < dat_.clientes.length; i++){
+				if( dat_.clientes ){
+					for(i = 0; i < dat_.clientes.length; i++){
+						
+						tabla += '<tr><td class="col-xs-9 col-sm-9"><p>'+dat_.clientes[i].empresa+' <span>[ '+dat_.clientes[i].empleado+' ]</span></p><span>Encargado: '+dat_.clientes[i].nombre+'</span></td><td class="col-xs-3 col-sm-3"><a href="editar-cliente.html?id='+dat_.clientes[i].id+'" class="btn btn-default"><i class="fa fa-edit"></i></a></a><a href="#popupEliminarCliente"  data-rel="popup" data-position-to="window" data-transition="pop" data-id="'+dat_.clientes[i].id+'" class="btn btn-danger del-cliente"><i class="fa fa-times"></i></a></td></tr>';
+						
+						option += '<option value="'+dat_.clientes[i].empresa+'">'+dat_.clientes[i].empresa+'</option>';
+					}
 					
-					tabla += '<tr><td class="col-xs-9 col-sm-9"><p>'+dat_.clientes[i].empresa+' <span>[ '+dat_.clientes[i].empleado+' ]</span></p><span>Encargado: '+dat_.clientes[i].nombre+'</span></td><td class="col-xs-3 col-sm-3"><a href="editar-cliente.html?id='+dat_.clientes[i].id+'" class="btn btn-default"><i class="fa fa-edit"></i></a></a><a href="#popupEliminarCliente"  data-rel="popup" data-position-to="window" data-transition="pop" data-id="'+dat_.clientes[i].id+'" class="btn btn-danger del-cliente"><i class="fa fa-times"></i></a></td></tr>';
-					
-					option += '<option value="'+dat_.clientes[i].empresa+'">'+dat_.clientes[i].empresa+'</option>';
+					jQuery('#mis-clientes tbody').html(tabla);
+					jQuery('#cliente-programar').html(option);
 				}
-				
-				jQuery('#mis-clientes tbody').html(tabla);
-				jQuery('#cliente-programar').html(option);
 				
 				loading_ajax({estado:false});
 			}
@@ -140,6 +146,7 @@ jQuery(document).ready(function(e) {
 		jQuery.ajax({
 			type: "POST",
 			url: ajax_url,
+			cache:false,
 			data: {
 				action: "get_all_users"
 			},
@@ -150,12 +157,14 @@ jQuery(document).ready(function(e) {
 				var tabla = '';
 				var option = '';
 				dat_ = jQuery.parseJSON(data);
-				for(i = 0; i < dat_.usuarios.length; i++){
-					option += '<option value="'+dat_.usuarios[i].id+'">'+dat_.usuarios[i].nombre+'</option>';
+				if( dat_.usuarios ){
+					for(i = 0; i < dat_.usuarios.length; i++){
+						option += '<option value="'+dat_.usuarios[i].id+'">'+dat_.usuarios[i].nombre+'</option>';
+					}
+					
+					jQuery('#empleado-programar').html(option);
+					jQuery('#empleado-cliente').html(option);
 				}
-				
-				jQuery('#empleado-programar').html(option);
-				jQuery('#empleado-cliente').html(option);
 				loading_ajax({estado:false});
 			}
 		});
