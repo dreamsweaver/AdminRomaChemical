@@ -1,5 +1,5 @@
 //url_base = 'http://localhost/RomaChemical/wp/';
-url_base = 'http://romachemical.laeliteweb.com/'
+url_base = 'http://app.romachemical.com/'
 ajax_url = url_base+'wp-admin/admin-ajax.php';
 
 document.addEventListener("deviceready", onDeviceReady, false);
