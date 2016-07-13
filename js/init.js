@@ -43,6 +43,13 @@ jQuery(document).ready(function(e) {
 					} else {
 						jQuery( "#popupLogin" ).popup( "open" );
 					}
+				},
+				timeout:10000,
+				error: function(){
+					loading_ajax({estado:false});
+					navigator.notification.alert('No hay respuesta del servidor, si haces click en aceptar se volverá a intentar cargar los datos', function(){ window.location.reload() }, 'Servidor no responde','Aceptar');
+					navigator.notification.beep(1000);
+					navigator.notification.vibrate(2);
 				}
 			});
 			return false;
@@ -816,6 +823,13 @@ function get_nonce(){
 			} else {
 				return false;
 			}
+		},
+		timeout:10000,
+		error: function(){
+			loading_ajax({estado:false});
+			navigator.notification.alert('No hay respuesta del servidor, si haces click en aceptar se volverá a intentar cargar los datos', function(){ window.location.reload() }, 'Servidor no responde','Aceptar');
+			navigator.notification.beep(1000);
+			navigator.notification.vibrate(2);
 		}
 	});
 }
