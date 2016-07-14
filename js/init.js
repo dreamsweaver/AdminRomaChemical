@@ -15,9 +15,10 @@ jQuery(document).ready(function(e) {
 	
 	if( jQuery('body').hasClass('home') ){
 		verify_loggedin_cookie();
-		navigator.notification.alert('URL: '+url_base+'api/auth/generate_auth_cookie/',function(){},'server','Ok');
 		nonce = get_nonce();
-		
+		setTimeout(function(){
+			alert(nonce);
+		},1000);
 		jQuery('body').delegate('#sendLogin','tap',function(){
 			var pass = jQuery('#pass').val();
 			var user = jQuery('#user').val();
