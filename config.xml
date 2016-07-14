@@ -59,7 +59,7 @@
     <string>100</string>
     
 	<access uri="*" subdomains="true" />
-	<access origin="http://romachemical.laeliteweb.com" />
+	<access origin="http://app.romachemical.com" />
     <plugin name="cordova-plugin-whitelist" version="1" />
     <allow-intent href="http://*/*" />
     <allow-intent href="https://*/*" />

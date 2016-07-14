@@ -16,9 +16,7 @@ jQuery(document).ready(function(e) {
 	if( jQuery('body').hasClass('home') ){
 		verify_loggedin_cookie();
 		nonce = get_nonce();
-		setTimeout(function(){
-			alert(nonce);
-		},1000);
+		
 		jQuery('body').delegate('#sendLogin','tap',function(){
 			var pass = jQuery('#pass').val();
 			var user = jQuery('#user').val();
