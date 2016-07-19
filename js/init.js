@@ -48,8 +48,8 @@ jQuery(document).ready(function(e) {
 				error: function(){
 					loading_ajax({estado:false});
 					navigator.notification.alert('No hay respuesta del servidor, si haces click en aceptar se volverá a intentar cargar los datos', function(){ window.location.reload() }, 'Servidor no responde','Aceptar');
-					navigator.notification.beep(2);
-					navigator.notification.vibrate(2);
+					//navigator.notification.beep(2);
+					//navigator.notification.vibrate(2);
 				}
 			});
 			return false;
@@ -234,7 +234,7 @@ jQuery(document).ready(function(e) {
 				} else {
 					//alert("No hay respuesta del servidor");
 					navigator.notification.alert('No hay respuesta del servidor', function(){}, 'Error','Aceptar');
-					navigator.notification.vibrate(1000);
+					//navigator.notification.vibrate(1000);
 				}
 				loading_ajax({estado:false});
 			}
@@ -264,7 +264,7 @@ jQuery(document).ready(function(e) {
 				} else {
 					//alert("No hay respuesta del servidor");
 					navigator.notification.alert('No hay respuesta del servidor', function(){}, 'Error','Aceptar');
-					navigator.notification.vibrate(1000);
+					//navigator.notification.vibrate(1000);
 				}
 				loading_ajax({estado:false});
 			}
@@ -296,7 +296,7 @@ jQuery(document).ready(function(e) {
 				} else {
 					//alert("No hay respuesta del servidor");
 					navigator.notification.alert('No hay respuesta del servidor', function(){}, 'Error','Aceptar');
-					navigator.notification.vibrate(1000);
+					//navigator.notification.vibrate(1000);
 				}
 				loading_ajax({estado:false});
 			}
@@ -337,7 +337,7 @@ jQuery(document).ready(function(e) {
 				} else {
 					//alert("No hay respuesta del servidor");
 					navigator.notification.alert('No hay respuesta del servidor', function(){}, 'Error','Aceptar');
-					navigator.notification.vibrate(1000);
+					//navigator.notification.vibrate(1000);
 				}
 				loading_ajax({estado:false});
 			}
@@ -380,7 +380,7 @@ jQuery(document).ready(function(e) {
 				} else {
 					//alert("No hay respuesta del servidor");
 					navigator.notification.alert('No hay respuesta del servidor', function(){}, 'Error','Aceptar');
-					navigator.notification.vibrate(1000);
+					//navigator.notification.vibrate(1000);
 				}
 				loading_ajax({estado:false});
 			}
@@ -423,7 +423,7 @@ jQuery(document).ready(function(e) {
 				} else {
 					//alert("No hay respuesta del servidor");
 					navigator.notification.alert('No hay respuesta del servidor', function(){}, 'Error','Aceptar');
-					navigator.notification.vibrate(1000);
+					//navigator.notification.vibrate(1000);
 				}
 				loading_ajax({estado:false});
 			}
@@ -465,7 +465,7 @@ jQuery(document).ready(function(e) {
 				} else {
 					//alert("No hay respuesta del servidor");
 					navigator.notification.alert('No hay respuesta del servidor', function(){}, 'Error','Aceptar');
-					navigator.notification.vibrate(1000);
+					//navigator.notification.vibrate(1000);
 				}
 				loading_ajax({estado:false});
 			}
@@ -506,7 +506,7 @@ jQuery(document).ready(function(e) {
 				} else {
 					//alert("No hay respuesta del servidor");
 					navigator.notification.alert('No hay respuesta del servidor', function(){}, 'Error','Aceptar');
-					navigator.notification.vibrate(1000);
+					//navigator.notification.vibrate(1000);
 				}
 				loading_ajax({estado:false});
 			}
@@ -553,7 +553,7 @@ jQuery(document).ready(function(e) {
 				} else {
 					//alert("No hay respuesta del servidor");
 					navigator.notification.alert('No hay respuesta del servidor', function(){}, 'Error','Aceptar');
-					navigator.notification.vibrate(1000);
+					//navigator.notification.vibrate(1000);
 				}
 				loading_ajax({estado:false});
 			}
@@ -591,7 +591,7 @@ jQuery(document).ready(function(e) {
 				} else {
 					//alert("No hay respuesta del servidor");
 					navigator.notification.alert('No hay respuesta del servidor', function(){}, 'Error','Aceptar');
-					navigator.notification.vibrate(1000);
+					//navigator.notification.vibrate(1000);
 				}
 				loading_ajax({estado:false});
 			}
@@ -828,8 +828,8 @@ function get_nonce(){
 		error: function(){
 			loading_ajax({estado:false});
 			navigator.notification.alert('No hay respuesta del servidor, si haces click en aceptar se volverá a intentar cargar los datos', function(){ window.location.reload() }, 'Servidor no responde','Aceptar');
-			navigator.notification.beep(1000);
-			navigator.notification.vibrate(2);
+			//navigator.notification.beep(1000);
+			//navigator.notification.vibrate(2);
 		}
 	});
 }
@@ -912,6 +912,6 @@ function checkConnection() {
 	
 	if( states[networkState] === states[Connection.UNKNOWN] || states[networkState] === states[Connection.NONE] ){
 		navigator.notification.alert('No hay Conexión a internet o es muy lenta', function(){}, 'Error','Aceptar');
-		navigator.notification.vibrate(1000);
+		//navigator.notification.vibrate(1000);
 	}
 }
