@@ -477,6 +477,8 @@ jQuery(document).ready(function(e) {
 		var email = jQuery('#email-encargado').val();
 		var empleado = jQuery('#empleado-programar').val();
 		var id = decodeURI(get_URL_parameter('id'));
+		var telefono = jQuery('#telefono-encargado').val();
+		var tipo = jQuery('#tipo-cliente').val();
 		
 		if( !encargado.length || !email.length ){
 			alert("Debes rellenar los campos");
@@ -491,6 +493,8 @@ jQuery(document).ready(function(e) {
 				encargado : encargado,
 				email : email,
 				empleado : empleado,
+				telefono : telefono,
+				tipo : tipo,
 				action: "edit_costumer"
 			},
 			beforeSend: function(){
@@ -519,11 +523,15 @@ jQuery(document).ready(function(e) {
 		var encargado = jQuery('#nombre-encargado').val();
 		var email = jQuery('#email-encargado').val();
 		var empleado = jQuery('#empleado-cliente').val();
+		var telefono = jQuery('#telefono-encargado').val();
+		var tipo = jQuery('#tipo-cliente').val();
 		
 		console.log(empresa);
 		console.log(encargado);
 		console.log(email);
 		console.log(empleado);
+		console.log(telefono);
+		console.log(tipo);
 		
 		if( !encargado.length || !email.length || !empresa.length ){
 			alert("Debes rellenar los campos");
@@ -538,6 +546,8 @@ jQuery(document).ready(function(e) {
 				encargado : encargado,
 				email : email,
 				empleado : empleado,
+				telefono : telefono,
+				tipo : tipo,
 				action: "add_costumer"
 			},
 			beforeSend: function(){
@@ -634,6 +644,15 @@ jQuery(document).ready(function(e) {
 					jQuery('#nombre-empresa').html(dat_[0].empresa);
 					jQuery('#nombre-encargado').val(dat_[0].encargado);
 					jQuery('#email-encargado').val(dat_[0].email);
+					jQuery('#telefono-encargado').val(dat_[0].telefono);
+					
+					jQuery('#tipo-cliente option').each(function() {
+						var element = jQuery(this);
+						if( dat_[0].tipo == element.attr('value') ){
+							element.attr('selected',true);
+							jQuery('#tipo-cliente').parent().find('span').text(dat_[0].tipo);
+						}
+					});
 					
 					jQuery.ajax({
 						type: "POST",
@@ -652,6 +671,7 @@ jQuery(document).ready(function(e) {
 								option += '<option value="'+dat2_.usuarios[i].id+'"';
 								if( dat_[0].empleado == dat2_.usuarios[i].id ){
 									option += ' selected';
+									jQuery('#empleado-programar').parent().find('span').text(dat2_.usuarios[i].nombre);
 								}
 								option += '>'+dat2_.usuarios[i].nombre+'</option>';
 							}

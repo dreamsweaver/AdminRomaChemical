@@ -13,6 +13,11 @@
 <link type="text/css" href="css/bootstrap-timepicker.less" />
 <link rel="stylesheet" type="text/css" href="css/style.css" />
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<script type="text/javascript" src="cordova.js"></script>
+<script type="text/javascript" src="js/jquery-1.12.4.min.js"></script>
+<script type="text/javascript" src="js/init-mobile.js"></script>
+<script type="text/javascript" src="js/jquery.mobile-1.4.5.min.js"></script>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>
 </head>
 
 <body class="app">
@@ -281,6 +286,14 @@
 						<input type="text" class="text-input underbar" id="nombre-encargado" name="nombre-encargado" placeholder="Nombre del encargado de recibir las visitas" />
 						<label for="email-encargado">Email encargado</label>
 						<input type="email" class="text-input underbar" id="email-encargado" name="email-encargado" placeholder="Email del encargado de recibir las visitas" />
+						<label for="telefono-encargado">Teléfono cliente</label>
+						<input type="tel" class="text-input underbar" id="telefono-encargado" name="telefono-encargado" placeholder="Teléfono de la empresa" />
+						<br>
+						<label for="tipo-cliente">Tipo de cliente</label>
+						<select id="tipo-cliente">
+							<option value="activo">Activo</option>
+							<option value="prospecto">Prospecto</option>
+						</select>
 						<br>
 						<label for="empleado-cliente">Empleado encargado de visitas</label>
 						<select id="empleado-cliente">
@@ -311,11 +324,6 @@
 		</div>
 	</div>
 </div>
-<script type="text/javascript" src="cordova.js"></script>
-<script type="text/javascript" src="js/jquery-1.12.4.min.js"></script>
-<script type="text/javascript" src="js/init-mobile.js"></script>
-<script type="text/javascript" src="js/jquery.mobile-1.4.5.min.js"></script>
-<script type="text/javascript" src="js/bootstrap.min.js"></script>
 <script type="text/javascript" src="js/moment.min.js"></script>
 <script type="text/javascript" src="js/fullcalendar.min.js"></script>
 <script type="text/javascript" src="js/lang-all.js"></script>
