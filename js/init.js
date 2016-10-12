@@ -143,7 +143,7 @@ jQuery(document).ready(function(e) {
 				if( dat_.clientes ){
 					for(i = 0; i < dat_.clientes.length; i++){
 						
-						tabla += '<tr><td class="col-xs-9 col-sm-9"><p>'+dat_.clientes[i].empresa+' <span>[ '+dat_.clientes[i].empleado+' ]</span></p><span>Encargado: '+dat_.clientes[i].nombre+'</span></td><td class="col-xs-3 col-sm-3"><a href="editar-cliente.html?id='+dat_.clientes[i].id+'" class="btn btn-default"><i class="fa fa-edit"></i></a></a><a href="#popupEliminarCliente"  data-rel="popup" data-position-to="window" data-transition="pop" data-id="'+dat_.clientes[i].id+'" class="btn btn-danger del-cliente"><i class="fa fa-times"></i></a></td></tr>';
+						tabla += '<tr><td class="col-xs-9 col-sm-9"><p>'+dat_.clientes[i].tipo+' '+dat_.clientes[i].empresa+' <span>[ '+dat_.clientes[i].empleado+' ]</span></p><span>Encargado: '+dat_.clientes[i].nombre+'</span></td><td class="col-xs-3 col-sm-3"><a href="editar-cliente.html?id='+dat_.clientes[i].id+'" class="btn btn-default"><i class="fa fa-edit"></i></a></a><a href="#popupEliminarCliente"  data-rel="popup" data-position-to="window" data-transition="pop" data-id="'+dat_.clientes[i].id+'" class="btn btn-danger del-cliente"><i class="fa fa-times"></i></a></td></tr>';
 						
 						option += '<option value="'+dat_.clientes[i].empresa+'">'+dat_.clientes[i].empresa+'</option>';
 					}
