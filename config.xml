@@ -30,16 +30,9 @@
 	
     <!-- Plugins -->
 
-    <!-- Core plugins -->
-    <gap:plugin name="org.apache.cordova.console" value="org.apache.cordova.console" />
-    <gap:plugin name="org.apache.cordova.device" value="org.apache.cordova.device" />
-    <gap:plugin name="org.apache.cordova.device-motion" value="org.apache.cordova.device-motion" />
-    <gap:plugin name="org.apache.cordova.device-orientation" value="org.apache.cordova.device-orientation" />
-    <gap:plugin name="org.apache.cordova.dialogs" value="org.apache.cordova.dialogs" />
-    <gap:plugin name="org.apache.cordova.inappbrowser" value="org.apache.cordova.inappbrowser" />
-    <gap:plugin name="org.apache.cordova.network-information" value="org.apache.cordova.network-information" />
-    <gap:plugin name="org.apache.cordova.splashscreen" value="org.apache.cordova.splashscreen" />
-    <gap:plugin name="org.apache.cordova.vibration" value="org.apache.cordova.vibration" />
+   <feature name="Geolocation">
+		<param name="android-package" value="org.apache.cordova.geolocation.GeoBroker" />
+	</feature>
 
     <!-- Define app icon for each platform. -->
     <icon src="icon.png" />
