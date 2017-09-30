@@ -31,7 +31,6 @@
     <!-- Plugins -->
 
     <!-- Core plugins -->
-    <gap:plugin name="org.apache.cordova.battery-status" value="org.apache.cordova.battery-status" />
     <gap:plugin name="org.apache.cordova.console" value="org.apache.cordova.console" />
     <gap:plugin name="org.apache.cordova.device" value="org.apache.cordova.device" />
     <gap:plugin name="org.apache.cordova.device-motion" value="org.apache.cordova.device-motion" />
